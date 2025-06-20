@@ -1,27 +1,27 @@
-"use strict"
+"use strict";
 
 function Book(title, author, pages, haveRead) {
-    if (!new.target) {
-        throw Error("You must use the 'new' operator to call the constructor");
-    }
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.id = crypto.randomUUID();
-    if (haveRead) {
-        this.haveRead = "already read";
-    } else {
-        this.haveRead = "not read yet";
-    }
+	if (!new.target) {
+		throw Error("You must use the 'new' operator to call the constructor");
+	}
+	this.title = title;
+	this.author = author;
+	this.pages = pages;
+	this.id = crypto.randomUUID();
+	if (haveRead) {
+		this.haveRead = "already read";
+	} else {
+		this.haveRead = "not read yet";
+	}
 
-    this.info = function() {
-        return `${this.title} by ${this.author}, ${this.pages} pages, ${this.haveRead}. ID = ${this.id}`;
-    }
+	this.info = function () {
+		return `${this.title} by ${this.author}, ${this.pages} pages, ${this.haveRead}. ID = ${this.id}`;
+	};
 }
 
 function createAndStore(title, author, pages, haveRead, libraryName) {
-    const book = new Book(title, author, pages, haveRead);
-    libraryName.push(book);
+	const book = new Book(title, author, pages, haveRead);
+	libraryName.push(book);
 }
 
 const myLibrary = [];
@@ -47,65 +47,81 @@ const haveRead = document.querySelector("#have-read");
 libraryName.textContent = "myLibrary";
 let bookOnDisplay = 0;
 
-Book.prototype.displayBook = function() {
-    const book = document.createElement("article");
-    const title = document.createElement("h2");
-    const author = document.createElement("p");
-    const pages = document.createElement("p");
-    const haveRead = document.createElement("p");
-    const id = document.createElement("p");
+Book.prototype.displayBook = function () {
+	const book = document.createElement("article");
+	const title = document.createElement("h2");
+	const author = document.createElement("p");
+	const pages = document.createElement("p");
+	const haveRead = document.createElement("p");
+	const id = document.createElement("p");
+	const del = document.createElement("button");
 
-    title.textContent = this.title;
-    author.textContent = this.author;
-    pages.textContent = `${this.pages} pages`;
-    haveRead.textContent = this.haveRead;
-    id.textContent = `ID: ${this.id}`;
+	title.textContent = this.title;
+	author.textContent = this.author;
+	pages.textContent = `${this.pages} pages`;
+	haveRead.textContent = this.haveRead;
+	id.textContent = `ID: ${this.id}`;
+	del.dataset.parent = this.id;
+	del.textContent = "Delete Book";
 
-    book.classList.add("book-info-card");
+	book.classList.add("book-info-card");
 
-    book.append(title, author, pages, haveRead, id);
-    bookshelf.appendChild(book);
-    bookOnDisplay++;
+	del.addEventListener("click", () => {
+		for (let i of myLibrary) {
+            if (i.id === del.dataset.parent) {
+                myLibrary.splice(myLibrary.indexOf(i), 1);
+                console.log(myLibrary);
+                book.remove();
+                bookOnDisplay--;
+                break;
+            }
+        }
+	});
+
+	book.append(title, author, pages, haveRead, id, del);
+	bookshelf.appendChild(book);
+	bookOnDisplay++;
 };
 
-for (let i=0; i<myLibrary.length; i++) {
-    myLibrary[i].displayBook();
+for (let i = 0; i < myLibrary.length; i++) {
+	myLibrary[i].displayBook();
 }
 
 function resetForm() {
-    titleInput.value = "";
-    authorInput.value = "";
-    pagesInput.value = 0;
-    haveRead.checked = false;
+	titleInput.value = "";
+	authorInput.value = "";
+	pagesInput.value = 0;
+	haveRead.checked = false;
 }
 
 newBookButton.addEventListener("click", () => {
-    newBookForm.showModal();
+	newBookForm.showModal();
 });
 
 closeForm.addEventListener("click", () => {
-    newBookForm.close();
-    resetForm();
+	newBookForm.close();
+	resetForm();
 });
 
 confirmNewBook.addEventListener("click", () => {
-    if (titleInput.value === "") {
-        titleInput.value = "Title";
-    }
-    if (authorInput.value === "") {
-        authorInput.value = "Author";
-    }
-    if (pagesInput.value === "") {
-        pagesInput.value = 0;
-    }
+	if (titleInput.value === "") {
+		titleInput.value = "Title";
+	}
+	if (authorInput.value === "") {
+		authorInput.value = "Author";
+	}
+	if (pagesInput.value === "") {
+		pagesInput.value = 0;
+	}
 
-    createAndStore(titleInput.value,
-        authorInput.value,
-        pagesInput.value,
-        haveRead.checked,
-        myLibrary
-    );
-    myLibrary[bookOnDisplay].displayBook();
-    newBookForm.close();
-    resetForm();
+	createAndStore(
+		titleInput.value,
+		authorInput.value,
+		pagesInput.value,
+		haveRead.checked,
+		myLibrary
+	);
+	myLibrary[bookOnDisplay].displayBook();
+	newBookForm.close();
+	resetForm();
 });
