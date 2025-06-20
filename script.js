@@ -19,6 +19,14 @@ function Book(title, author, pages, haveRead) {
 	};
 }
 
+Book.prototype.toggleRead = function() {
+    if (this.haveRead === "already read") {
+        this.haveRead = "not read yet";
+    } else if (this.haveRead === "not read yet") {
+        this.haveRead = "already read";
+    }
+};
+
 function createAndStore(title, author, pages, haveRead, libraryName) {
 	const book = new Book(title, author, pages, haveRead);
 	libraryName.push(book);
@@ -55,11 +63,13 @@ Book.prototype.displayBook = function () {
 	const haveRead = document.createElement("p");
 	const id = document.createElement("p");
 	const del = document.createElement("button");
+    const changeRead = document.createElement("button");
 
 	title.textContent = this.title;
 	author.textContent = this.author;
 	pages.textContent = `${this.pages} pages`;
 	haveRead.textContent = this.haveRead;
+    changeRead.textContent = "change read status";
 	id.textContent = `ID: ${this.id}`;
 	del.dataset.parent = this.id;
 	del.textContent = "Delete Book";
@@ -70,7 +80,6 @@ Book.prototype.displayBook = function () {
 		for (let i of myLibrary) {
             if (i.id === del.dataset.parent) {
                 myLibrary.splice(myLibrary.indexOf(i), 1);
-                console.log(myLibrary);
                 book.remove();
                 bookOnDisplay--;
                 break;
@@ -78,7 +87,18 @@ Book.prototype.displayBook = function () {
         }
 	});
 
-	book.append(title, author, pages, haveRead, id, del);
+    changeRead.addEventListener("click", () => { // to fix: this only can work once
+		for (let i of myLibrary) {
+            if (i.id === del.dataset.parent) {
+                this.toggleRead();
+                haveRead.textContent = this.haveRead;
+                console.log(this.haveRead);
+                break;
+            }
+        }
+	});
+
+	book.append(title, author, pages, haveRead, changeRead, id, del);
 	bookshelf.appendChild(book);
 	bookOnDisplay++;
 };
