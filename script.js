@@ -72,15 +72,33 @@ for (let i=0; i<myLibrary.length; i++) {
     myLibrary[i].displayBook();
 }
 
+function resetForm() {
+    titleInput.value = "";
+    authorInput.value = "";
+    pagesInput.value = 0;
+    haveRead.checked = false;
+}
+
 newBookButton.addEventListener("click", () => {
     newBookForm.showModal();
 });
 
 closeForm.addEventListener("click", () => {
     newBookForm.close();
+    resetForm();
 });
 
 confirmNewBook.addEventListener("click", () => {
+    if (titleInput.value === "") {
+        titleInput.value = "Title";
+    }
+    if (authorInput.value === "") {
+        authorInput.value = "Author";
+    }
+    if (pagesInput.value === "") {
+        pagesInput.value = 0;
+    }
+
     createAndStore(titleInput.value,
         authorInput.value,
         pagesInput.value,
@@ -89,4 +107,5 @@ confirmNewBook.addEventListener("click", () => {
     );
     myLibrary[bookOnDisplay].displayBook();
     newBookForm.close();
+    resetForm();
 });
