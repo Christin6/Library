@@ -32,9 +32,13 @@ createAndStore("Lord of the Rings", "J.R.R. Tolkien", 540, true, myLibrary);
 console.log(myLibrary);
 console.log(myLibrary[0].info());
 
-
+/* DOM */
 const libraryName = document.querySelector("#library-name");
 const bookshelf = document.querySelector("#bookshelf");
+const newBookButton = document.querySelector("#new-book-button");
+const newBookForm = document.querySelector("#new-book-form");
+const closeForm = document.querySelector("#close-form");
+const confirmNewBook = document.querySelector("#confirm-new-book");
 
 libraryName.textContent = "myLibrary";
 
@@ -61,3 +65,11 @@ Book.prototype.displayBook = function() {
 for (let i=0; i<myLibrary.length; i++) {
     myLibrary[i].displayBook();
 }
+
+newBookButton.addEventListener("click", () => {
+    newBookForm.showModal();
+});
+
+closeForm.addEventListener("click", () => {
+    newBookForm.close();
+})
