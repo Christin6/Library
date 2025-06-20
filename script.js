@@ -39,8 +39,13 @@ const newBookButton = document.querySelector("#new-book-button");
 const newBookForm = document.querySelector("#new-book-form");
 const closeForm = document.querySelector("#close-form");
 const confirmNewBook = document.querySelector("#confirm-new-book");
+const titleInput = document.querySelector("#title-input");
+const authorInput = document.querySelector("#author-input");
+const pagesInput = document.querySelector("#pages-input");
+const haveRead = document.querySelector("#have-read");
 
 libraryName.textContent = "myLibrary";
+let bookOnDisplay = 0;
 
 Book.prototype.displayBook = function() {
     const book = document.createElement("article");
@@ -60,6 +65,7 @@ Book.prototype.displayBook = function() {
 
     book.append(title, author, pages, haveRead, id);
     bookshelf.appendChild(book);
+    bookOnDisplay++;
 };
 
 for (let i=0; i<myLibrary.length; i++) {
@@ -72,4 +78,15 @@ newBookButton.addEventListener("click", () => {
 
 closeForm.addEventListener("click", () => {
     newBookForm.close();
-})
+});
+
+confirmNewBook.addEventListener("click", () => {
+    createAndStore(titleInput.value,
+        authorInput.value,
+        pagesInput.value,
+        haveRead.checked,
+        myLibrary
+    );
+    myLibrary[bookOnDisplay].displayBook();
+    newBookForm.close();
+});
