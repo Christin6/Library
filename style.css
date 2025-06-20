@@ -1,0 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+/* TABLE OF CONTENTS
+|| Variables
+|| Reset
+|| General Layout & Utilities
+|| Specific Styles */
+
+/* || Variables */
+:root {
+	--accent-color: #97a98b;
+	--bg-color: #f8f8f9;
+	--fg-color: white;
+}
+
+/* || Reset */
+/* 1. Use a more-intuitive box-sizing model */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+* {
+	margin: 0;
+}
+
+/* 3. Enable keyword animations */
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		interpolate-size: allow-keywords;
+	}
+}
+
+body {
+	/* 4. Add accessible line-height */
+	line-height: 1.5;
+	/* 5. Improve text rendering */
+	-webkit-font-smoothing: antialiased;
+}
+
+/* 6. Improve media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+/* 7. Inherit fonts for form controls */
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+/* 8. Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	overflow-wrap: break-word;
+}
+
+/* 9. Improve line wrapping */
+p {
+	text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	text-wrap: balance;
+}
+
+/*
+  10. Create a root stacking context
+*/
+#root,
+#__next {
+	isolation: isolate;
+}
+
+/* || General Layout and Utilities */
+html {
+	font-family: "Montserrat", sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+}
+
+body {
+	background-color: var(--bg-color);
+}
+
+button {
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 2rem;
+    padding: 0.5rem 2rem;
+    color: var(--fg-color);
+    font-weight: 800;
+}
+
+/* || Specific Styles */
+header {
+	display: flex;
+	justify-content: space-between;
+	padding: 1rem 3rem;
+}
+
+header p {
+	font-size: 2rem;
+}
+
+main {
+	margin: 2rem 4rem;
+}
+
+#bookshelf {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 1rem;
+}
+
+.book-info-card {
+	background-color: var(--fg-color);
+	padding: 3rem 2rem;
+}
+
+footer {
+	text-align: center;
+}
