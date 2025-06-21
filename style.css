@@ -180,6 +180,10 @@ main {
 	box-shadow: var(--shadow-elevation-medium);
 }
 
+.book-id {
+	font-size: 0.9rem;
+}
+
 footer {
 	text-align: center;
 }

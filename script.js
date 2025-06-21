@@ -74,6 +74,7 @@ Book.prototype.displayBook = function () {
 	del.dataset.parent = this.id;
 	del.textContent = "Delete Book";
 
+	id.classList.add("book-id");
 	book.classList.add("book-info-card");
 	del.classList.add("small-button");
 	changeRead.classList.add("small-button");
