@@ -11,6 +11,14 @@
 	--accent-color: #97a98b;
 	--bg-color: #f8f8f9;
 	--fg-color: white;
+
+	--shadow-color: 256deg 6% 23%;
+	--shadow-elevation-low:
+    0.2px 0.2px 0.4px hsl(var(--shadow-color) / 0.02),
+    0.6px 0.7px 1.4px -0.1px hsl(var(--shadow-color) / 0.3);
+  --shadow-elevation-medium:
+    0.2px 0.2px 0.4px hsl(var(--shadow-color) / 0.03),
+    2.8px 3.3px 6.4px -0.1px hsl(var(--shadow-color) / 0.42);
 }
 
 /* || Reset */
@@ -109,6 +117,16 @@ button {
 	color: var(--fg-color);
 	font-weight: 800;
 	margin: 0.5rem 1rem;
+	box-shadow: var(--shadow-elevation-low);
+}
+
+button:hover {
+	filter: brightness(90%);
+}
+
+button:active {
+	filter: brightness(100%);
+	box-shadow: var(--shadow-elevation-medium);
 }
 
 .small-button {
@@ -123,7 +141,7 @@ dialog {
 	margin: 0; /* `margin: auto;` is the default. */
 	transform: translateX(-50%) translateY(-50%);
 	left: 50%;
-    top: 50%;
+	top: 50%;
 }
 
 /* || Specific Styles */
@@ -159,7 +177,7 @@ main {
 .book-info-card {
 	background-color: var(--fg-color);
 	padding: 3rem 2rem;
-	max-width: 50%;
+	box-shadow: var(--shadow-elevation-medium);
 }
 
 footer {
