@@ -108,6 +108,13 @@ button {
 	padding: 0.5rem 2rem;
 	color: var(--fg-color);
 	font-weight: 800;
+	margin: 0.5rem 1rem;
+}
+
+.small-button {
+	padding: 0.5rem 1rem;
+	font-size: 0.8rem;
+	margin-right: 0rem;
 }
 
 dialog {
@@ -152,6 +159,7 @@ main {
 .book-info-card {
 	background-color: var(--fg-color);
 	padding: 3rem 2rem;
+	max-width: 50%;
 }
 
 footer {

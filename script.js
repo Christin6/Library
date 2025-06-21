@@ -75,6 +75,8 @@ Book.prototype.displayBook = function () {
 	del.textContent = "Delete Book";
 
 	book.classList.add("book-info-card");
+	del.classList.add("small-button");
+	changeRead.classList.add("small-button");
 
 	del.addEventListener("click", () => {
 		for (let i of myLibrary) {
@@ -98,7 +100,7 @@ Book.prototype.displayBook = function () {
         }
 	});
 
-	book.append(title, author, pages, haveRead, changeRead, id, del);
+	book.append(title, author, pages, haveRead, id, changeRead, del);
 	bookshelf.appendChild(book);
 	bookOnDisplay++;
 };
