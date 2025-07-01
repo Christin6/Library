@@ -1,150 +1,174 @@
 "use strict";
 
-function Book(title, author, pages, haveRead) {
-	if (!new.target) {
-		throw Error("You must use the 'new' operator to call the constructor");
-	}
-	this.title = title;
-	this.author = author;
-	this.pages = pages;
-	this.id = crypto.randomUUID();
-	if (haveRead) {
-		this.haveRead = "already read";
-	} else {
-		this.haveRead = "not read yet";
+class Book {
+	constructor(title, author, pages, haveRead) {
+		this.title = this.validateString(title, "Unknown Title");
+        this.author = this.validateString(author, "Unknown Author");
+        this.pages = this.validatePages(pages);
+        this.haveRead = Boolean(haveRead);
+		this.id = crypto.randomUUID();
 	}
 
-	this.info = function () {
+	validateString(value, defaultValue) {
+		if (typeof value === 'string' && value.trim()) {
+			return value.trim();
+		} else { return defaultValue };
+    }
+
+    validatePages(pages) {
+        let num = parseInt(pages);
+		if (num <= 0) {
+			num = 1;
+		}
+		return num
+    }
+
+	info () {
 		return `${this.title} by ${this.author}, ${this.pages} pages, ${this.haveRead}. ID = ${this.id}`;
 	};
-}
 
-Book.prototype.toggleRead = function() {
-    if (this.haveRead === "already read") {
-        this.haveRead = "not read yet";
-    } else if (this.haveRead === "not read yet") {
-        this.haveRead = "already read";
-    }
-};
-
-function createAndStore(title, author, pages, haveRead, libraryName) {
-	const book = new Book(title, author, pages, haveRead);
-	libraryName.push(book);
-}
-
-const myLibrary = [];
-
-createAndStore("The Hobbit", "J.R.R. Tolkien", 540, true, myLibrary);
-createAndStore("Lord of the Rings", "J.R.R. Tolkien", 540, true, myLibrary);
-
-console.log(myLibrary);
-console.log(myLibrary[0].info());
-
-/* DOM */
-const libraryName = document.querySelector("#library-name");
-const bookshelf = document.querySelector("#bookshelf");
-const newBookButton = document.querySelector("#new-book-button");
-const newBookForm = document.querySelector("#new-book-form");
-const closeForm = document.querySelector("#close-form");
-const confirmNewBook = document.querySelector("#confirm-new-book");
-const titleInput = document.querySelector("#title-input");
-const authorInput = document.querySelector("#author-input");
-const pagesInput = document.querySelector("#pages-input");
-const haveRead = document.querySelector("#have-read");
-
-libraryName.textContent = "myLibrary";
-let bookOnDisplay = 0;
-
-Book.prototype.displayBook = function () {
-	const book = document.createElement("article");
-	const title = document.createElement("h2");
-	const author = document.createElement("p");
-	const pages = document.createElement("p");
-	const haveRead = document.createElement("p");
-	const id = document.createElement("p");
-	const del = document.createElement("button");
-    const changeRead = document.createElement("button");
-
-	title.textContent = this.title;
-	author.textContent = this.author;
-	pages.textContent = `${this.pages} pages`;
-	haveRead.textContent = this.haveRead;
-    changeRead.textContent = "change read status";
-	id.textContent = `ID: ${this.id}`;
-	del.dataset.parent = this.id;
-	del.textContent = "Delete Book";
-
-	id.classList.add("book-id");
-	book.classList.add("book-info-card");
-	del.classList.add("small-button");
-	changeRead.classList.add("small-button");
-
-	del.addEventListener("click", () => {
-		for (let i of myLibrary) {
-            if (i.id === del.dataset.parent) {
-                myLibrary.splice(myLibrary.indexOf(i), 1);
-                book.remove();
-                bookOnDisplay--;
-                break;
-            }
-        }
-	});
-
-    changeRead.addEventListener("click", () => { // to fix: this only can work once
-		for (let i of myLibrary) {
-            if (i.id === del.dataset.parent) {
-                this.toggleRead();
-                haveRead.textContent = this.haveRead;
-                console.log(this.haveRead);
-                break;
-            }
-        }
-	});
-
-	book.append(title, author, pages, haveRead, id, changeRead, del);
-	bookshelf.appendChild(book);
-	bookOnDisplay++;
-};
-
-for (let i = 0; i < myLibrary.length; i++) {
-	myLibrary[i].displayBook();
-}
-
-function resetForm() {
-	titleInput.value = "";
-	authorInput.value = "";
-	pagesInput.value = 0;
-	haveRead.checked = false;
-}
-
-newBookButton.addEventListener("click", () => {
-	newBookForm.showModal();
-});
-
-closeForm.addEventListener("click", () => {
-	newBookForm.close();
-	resetForm();
-});
-
-confirmNewBook.addEventListener("click", () => {
-	if (titleInput.value === "") {
-		titleInput.value = "Title";
-	}
-	if (authorInput.value === "") {
-		authorInput.value = "Author";
-	}
-	if (pagesInput.value === "") {
-		pagesInput.value = 0;
+	toggleRead() {
+		this.haveRead = !this.haveRead;
 	}
 
-	createAndStore(
-		titleInput.value,
-		authorInput.value,
-		pagesInput.value,
-		haveRead.checked,
-		myLibrary
-	);
-	myLibrary[bookOnDisplay].displayBook();
-	newBookForm.close();
-	resetForm();
-});
+	getReadStatus() {
+		if (this.haveRead) {
+			return "Read";
+		} else {
+			return "Not Read Yet";
+		}
+	}
+}
+
+class Library {
+	constructor(name = "My Library") {
+		this.name = name;
+		this.books = new Map();
+	}
+
+	addBook(book) {
+		this.books.set(book.id, book);
+	}
+
+	removeBook(id) {
+		this.books.delete(id);
+	}
+
+	getBook(id) {
+		return this.books.get(id);
+	}
+
+	getAllBooks() {
+		return Array.from(this.books.values());
+	}
+
+	getBookCount() {
+		return this.books.size;
+	}
+}
+
+class LibraryUI {
+	constructor(library, containerSelector) {
+		this.library = library;
+		this.containerSelector = document.querySelector(containerSelector);
+		this.initializeElements();
+		this.setupEventListeners();
+		this.render();
+	}
+
+	initializeElements() {
+		this.elements = {
+            libraryName: document.querySelector("#library-name"),
+            bookshelf: document.querySelector("#bookshelf"),
+            newBookButton: document.querySelector("#new-book-button"),
+            newBookForm: document.querySelector("#new-book-form"),
+            closeForm: document.querySelector("#close-form"),
+            confirmNewBook: document.querySelector("#confirm-new-book"),
+            titleInput: document.querySelector("#title-input"),
+            authorInput: document.querySelector("#author-input"),
+            pagesInput: document.querySelector("#pages-input"),
+            haveReadInput: document.querySelector("#have-read")
+        };
+
+		this.elements.libraryName.textContent = this.library.name;
+	}
+
+	render() {
+		this.library.getAllBooks().forEach(book => {
+			this.displayBook(book);
+		});
+	}
+
+	displayBook(book) {
+		const bookCard = document.createElement("article");
+		bookCard.classList.add('book-info-card');
+
+		bookCard.innerHTML = `
+			<h2>${book.title}</h2>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Pages:</strong> ${book.pages}</p>
+            <p class="read-status"><strong>Status:</strong> ${book.getReadStatus()}</p>
+            <p class="book-id">ID: ${book.id}</p>
+            <div class="book-actions">
+                <button class="small-button toggle-read-btn">Toggle Read Status</button>
+                <button class="small-button delete-btn">Delete Book</button>
+            </div>
+		`;
+
+		const del = bookCard.querySelector('.delete-btn');
+		const changeRead = bookCard.querySelector('.toggle-read-btn');
+		const haveRead = bookCard.querySelector('.read-status');
+
+		del.addEventListener("click", () => {
+			this.library.removeBook(book.id);
+			bookCard.remove();
+		});
+
+		changeRead.addEventListener("click", () => {
+			book.toggleRead();
+			haveRead.innerHTML = `<strong>Status:</strong> ${book.getReadStatus()}`;
+		});
+
+		this.elements.bookshelf.appendChild(bookCard);
+	}
+
+	resetForm() {
+		this.elements.titleInput.value = "";
+		this.elements.authorInput.value = "";
+		this.elements.pagesInput.value = 0;
+		this.elements.haveReadInput.checked = false;
+	}
+
+	setupEventListeners() {
+		this.elements.newBookButton.addEventListener("click", () => {
+			this.elements.newBookForm.showModal();
+		});
+
+		this.elements.closeForm.addEventListener("click", () => {
+			this.elements.newBookForm.close();
+			this.resetForm();
+		});
+
+		this.elements.confirmNewBook.addEventListener("click", () => {
+			const book = new Book(
+					this.elements.titleInput.value,
+					this.elements.authorInput.value,
+					this.elements.pagesInput.value,
+					this.elements.haveReadInput.checked,
+				);
+			this.library.addBook(book);
+			this.displayBook(book);
+			this.elements.newBookForm.close();
+			this.resetForm();
+		});
+	}
+}
+
+const myLibrary = new Library();
+
+myLibrary.addBook(new Book("The Hobbit", "J.R.R. Tolkien", 540, true));
+myLibrary.addBook(new Book("Lord of the Rings", "J.R.R. Tolkien", 540, true));
+
+console.log(myLibrary.getAllBooks());
+
+const libraryUI = new LibraryUI(myLibrary, "#bookshelf");
